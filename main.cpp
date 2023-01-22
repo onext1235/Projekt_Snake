@@ -14,44 +14,18 @@
 #include <windows.h>
 #include "pasta.h"
 
-const int height = 10;
-const int width = 10;
-
-int score;
-int x_tail[100], y_tail[100];
-int n_tail = { 0 };
-int x = { 5 };
-int y = { 5 };
-int x_apple;
-int y_apple;
-char map_choice = 'f';
-bool game_over = false;
-bool wyjscie = false;
-
-eDirection dir;
-eDirection position[100];
-
 int main()
 {
-    Vec_aski blok(2, aski(2, 'H'));
-    Vec_aski miejsce(2, aski(2, ' '));
-    Mac papier;
-    //Mac screen;
-    snake anakonda;
-    apple owoc;
-    map polmska;
-
     while (1)
     {
-        pasta::menu(map_choice, wyjscie);
-        pasta::start(game_over, n_tail, score, x, y, dir, x_apple, y_apple, height);
-        while (!game_over)
+        pasta::menu();
+        pasta::start();
+        while (!pasta::game_over)
         {
-            auto screen = pasta::setup(polmska, blok, papier, map_choice, height);
-         
-            pasta::show(screen, anakonda, owoc, height, x, y, x_apple, y_apple, n_tail, position, x_tail, y_tail, dir, score);
-            pasta::input(dir);
-            pasta::logic(screen, blok, miejsce, height, x, y, x_apple, y_apple, x_tail, y_tail, position, n_tail, dir, game_over, score, map_choice);
+            pasta::screen = pasta::setup(pasta::polmska, pasta::blok, pasta::papier);
+            pasta::show(pasta::screen, pasta::anakonda, pasta::owoc);
+            pasta::input();
+            pasta::logic(pasta::screen, pasta::blok, pasta::miejsce);
             Sleep(200);
         }
     }

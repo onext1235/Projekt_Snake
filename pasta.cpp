@@ -15,6 +15,31 @@
 #include <dos.h>
 #include <windows.h>
 
+eDirection pasta::dir;
+eDirection pasta::position[100];
+
+const int pasta::height = 10;
+const int pasta::width = 10;
+int pasta::score = { 0 };
+int pasta::x_tail[100];
+int pasta::y_tail[100];
+int pasta::n_tail = { 0 };
+int pasta::x = { 5 };
+int pasta::y = { 5 };
+int pasta::x_apple;
+int pasta::y_apple;
+char pasta::map_choice;
+bool pasta::game_over = false;
+bool pasta::wyjscie = false;
+
+Vec_aski pasta::blok(2, aski(2, 'H'));
+Vec_aski pasta::miejsce(2, aski(2, ' '));
+Mac pasta::papier;
+Mac pasta::screen;
+snake pasta::anakonda;
+apple pasta::owoc;
+map pasta::polmska;
+
 apple::apple()
 {
     xd = aski(2, 'a');
@@ -42,7 +67,7 @@ map::map()
     world = Mac(10, Dac(10, Vec_aski(2, aski(2, ' '))));
 }
 
-int pasta::RNG(int height)                                                                                                   // funkcja zwaraza losow¹ liczbê od 0 do height/width
+int pasta::RNG()                                                                                                   // funkcja zwaraza losow¹ liczbê od 0 do height/width
 {
     std::random_device rd;
     std::mt19937 mtRandomEngine(rd());
@@ -52,10 +77,11 @@ int pasta::RNG(int height)                                                      
     return random_decimals[0];
 }
 
-int pasta::menu(char map_choice, bool exit)
+char pasta::menu()
 {
     system("cls");
     std::cout << "SNAKE" << std::endl;
+    std::cout << "Last SCORE: " << score << std::endl;
     std::cout << "1. Start" << std::endl;
     std::cout << "2. Credits" << std::endl;
     std::cout << "3. Exit" << std::endl;
@@ -64,7 +90,7 @@ int pasta::menu(char map_choice, bool exit)
     {
         choice = _getch();
 
-        switch (int(choice) - 48)
+        switch (int(choice)-48)
         {
         case 1:
         {
@@ -73,10 +99,10 @@ int pasta::menu(char map_choice, bool exit)
             std::cout << "2. Level 2" << std::endl;
             std::cout << "3. Level 3" << std::endl;
             choice = _getch();
-            if (int(choice) - 48 == 1 || int(choice) - 48 == 2 || int(choice) - 48 == 3)
+            if (choice == '1' || choice == '2' || choice == '3')
             {
                 map_choice = choice;
-                return 0;
+                return map_choice;
             }
             break;
         }
@@ -93,20 +119,20 @@ int pasta::menu(char map_choice, bool exit)
     }
 }
 
-void pasta::start(bool& game_over, int n_tail, int score, int x, int y, eDirection dir, int x_apple, int y_apple, int height)
+void pasta::start()
 {
     game_over = false;
     n_tail = 0;
     score = 0;
     x = 5;
     y = 5;
-    dir = UP;
+    dir = STOP;
     bool free = false;
 
     while (!free)
     {
-        x_apple = RNG(height);
-        y_apple = RNG(height);
+        x_apple = RNG();
+        y_apple = RNG();
         if (!(x_apple == 0 || y_apple == 0 || x_apple == 9 || y_apple == 9))
         {
             free = true;
@@ -115,7 +141,7 @@ void pasta::start(bool& game_over, int n_tail, int score, int x, int y, eDirecti
 
 }
 
-void pasta::input(eDirection dir)
+void pasta::input()
 {
     if (_kbhit())
     {
@@ -149,7 +175,7 @@ void pasta::input(eDirection dir)
     }
 }
 
-void pasta::logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce, int height, int x, int y, int x_apple, int y_apple, int x_tail[], int y_tail[], eDirection position[], int n_tail, eDirection dir, bool game_over, int score, char map_choice)
+void pasta::logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce)
 {
     int prev_x = x_tail[0];
     int prev_y = y_tail[0];
@@ -211,7 +237,7 @@ void pasta::logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce, int height, int x, 
         if (x_tail[i] == x && y_tail[i] == y)
             game_over = true;
     }
-    if (map_choice == '2' || map_choice == '3')
+    if (int(map_choice) - 48 == 2 || int(map_choice) - 48 == 3)
     {
         if (m[x][y] == blok)
         {
@@ -225,8 +251,8 @@ void pasta::logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce, int height, int x, 
         bool free = false;
         while (!free)
         {
-            x_apple = RNG(height);
-            y_apple = RNG(height);
+            x_apple = RNG();
+            y_apple = RNG();
             if (m[x_apple][y_apple] == miejsce)
             {
                 free = true;
@@ -235,7 +261,7 @@ void pasta::logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce, int height, int x, 
     }
 }
 
-void pasta::show(Mac& m, snake& head, apple& owoc, int height, int x, int y, int x_apple, int y_apple, int n_tail, eDirection position[], int x_tail[], int y_tail[], eDirection dir, int score)                               // Wyœwietlanie gry na konsoli
+void pasta::show(Mac& m, snake& head, apple& owoc)                               // Wyœwietlanie gry na konsoli
 {
     system("cls");
     for (int r = 0; r < height; r++)
@@ -248,22 +274,22 @@ void pasta::show(Mac& m, snake& head, apple& owoc, int height, int x, int y, int
                 {
                     if (r == x && c == y)
                     {
-                        std::cout << "siema\n";
-                        if (dir == UP)
-                        {
-                            m[r][c] = head.head_up;
-                        }
-                        else if (dir == DOWN)
-                        {
-                            m[r][c] = head.head_down;
-                        }
-                        else if (dir == LEFT)
-                        {
+                        switch (dir)
+                        {  
+                        case LEFT:
                             m[r][c] = head.head_left;
-                        }
-                        else if (dir == RIGHT)
-                        {
+                            break;
+                        case RIGHT:
                             m[r][c] = head.head_right;
+                            break;
+                        case UP:
+                            m[r][c] = head.head_up;
+                            break;
+                        case DOWN:
+                            m[r][c] = head.head_down;
+                            break;
+                        default:
+                            break;
                         }  
                     }
                     else if (r == x_apple && c == y_apple)
@@ -287,7 +313,6 @@ void pasta::show(Mac& m, snake& head, apple& owoc, int height, int x, int y, int
                             }
                         }
                     }
-                    std::cout << "siema\n";
                     std::cout << m[r][c][i][j] << " ";
                 }
             }
@@ -297,15 +322,15 @@ void pasta::show(Mac& m, snake& head, apple& owoc, int height, int x, int y, int
     std::cout << "Score: " << score << std::endl;
 }
 
-Mac pasta::setup(map& mapa, Vec_aski& blok, Mac& papier, char map_choice, int height)
+Mac pasta::setup(map& mapa, Vec_aski& blok, Mac& papier)
 {
-    std::cout << "siema\n";
+    
     papier = mapa.world;
     if (map_choice == '1')
     {
         return papier;
     }
-    else if (map_choice == '2')
+    else if (int(map_choice) - 48 == 2)
     {
         for (int r = 0; r < height; r++)
         {
@@ -319,13 +344,13 @@ Mac pasta::setup(map& mapa, Vec_aski& blok, Mac& papier, char map_choice, int he
         }
         return papier;
     }
-    else if (map_choice == '3')
+    else if (int(map_choice) - 48 == 3)
     {
         for (int r = 0; r < height; r++)
         {
             for (int c = 0; c < height; c++)
             {
-                if (c == 0 || c == 9 || r == 0 || r == 9)
+                if (c == 0 || c == 9)
                 {
                     papier[r][c] = blok;
                 }
@@ -333,5 +358,4 @@ Mac pasta::setup(map& mapa, Vec_aski& blok, Mac& papier, char map_choice, int he
         }
         return papier;
     }
-    std::cout << "siema\n";
 }

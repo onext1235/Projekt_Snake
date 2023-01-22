@@ -48,14 +48,39 @@ struct map
 };
 
 class pasta
-{
+{  
     public:
-    static int RNG(int height);
-    static int menu(char map_choice, bool exit);
-    static void start(bool& game_over, int n_tail, int score, int x, int y, eDirection dir, int x_apple, int y_apple, int height);
-    static void input(eDirection dir);
-    static void logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce, int height, int x, int y, int x_apple, int y_apple, int x_tail[], int y_tail[], eDirection position[], int n_tail, eDirection dir, bool game_over, int score, char map_choice);
-    static void show(Mac& m, snake& head, apple& owoc, int height, int x, int y, int x_apple, int y_apple, int n_tail, eDirection position[], int x_tail[], int y_tail[], eDirection dir, int score);
-    static Mac setup(map& mapa, Vec_aski& blok, Mac& papier, char map_choice, int height);
+
+    static const int height;
+    static const int width;
+    static int score;
+    static int x_tail[100], y_tail[100];
+    static int n_tail;
+    static int x;
+    static int y;
+    static int x_apple;
+    static int y_apple;
+    static char map_choice;
+    static bool game_over;
+    static bool wyjscie;
+
+    static Vec_aski blok;
+    static Vec_aski miejsce;
+    static Mac papier;
+    static Mac screen;
+    static snake anakonda;
+    static apple owoc;
+    static map polmska;
+
+    static eDirection dir;
+    static eDirection position[100];
+  
+    static int RNG();
+    static char menu();
+    static void start();
+    static void input();
+    static void logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce);
+    static void show(Mac& m, snake& head, apple& owoc);
+    static Mac setup(map& mapa, Vec_aski& blok, Mac& papier);
 };
 
