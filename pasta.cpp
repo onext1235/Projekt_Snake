@@ -1,6 +1,5 @@
 #include "pasta.h"
-
-//#include <iostream>
+#include <iostream>
 #include <string>
 #include <vector>
 #include <cstdlib>
@@ -78,15 +77,16 @@ int pasta::RNG()                                                                
 
 char pasta::menu()
 {
-    system("cls");
-    std::cout << "SNAKE" << std::endl;
-    std::cout << "Last SCORE: " << score << std::endl;
-    std::cout << "1. Start" << std::endl;
-    std::cout << "2. Credits" << std::endl;
-    std::cout << "3. Exit" << std::endl;
+    
     char choice;
     while (1)
     {
+        system("cls");
+        std::cout << "SNAKE" << std::endl;
+        std::cout << "Last SCORE: " << score << std::endl;
+        std::cout << "1. Start" << std::endl;
+        std::cout << "2. Credits" << std::endl;
+        std::cout << "3. Exit" << std::endl;
         choice = _getch();
 
         switch (int(choice)-48)
@@ -107,6 +107,10 @@ char pasta::menu()
         }
         case 2:
         {
+            system("cls");
+            std::cout << "Created by: " << std::endl;
+            std::cout << "Maciej Drozdz" << std::endl;
+            Sleep(3000);
             break;
         }
         case 3:
