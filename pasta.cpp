@@ -126,7 +126,7 @@ void pasta::start()
     score = 0;
     x = 5;
     y = 5;
-    dir = STOP;
+    dir = STOP;   
     bool free = false;
 
     while (!free)
@@ -187,7 +187,7 @@ void pasta::logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce)
     y_tail[0] = y;
 
     for (int i = 1; i < n_tail; i++)
-    {
+    { 
         prev_2x = x_tail[i];
         prev_2y = y_tail[i];
         x_tail[i] = prev_x;
