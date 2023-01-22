@@ -1,6 +1,6 @@
 #include "pasta.h"
 
-#include <iostream>
+//#include <iostream>
 #include <string>
 #include <vector>
 #include <cstdlib>
@@ -14,9 +14,9 @@
 #include <time.h>
 #include <dos.h>
 #include <windows.h>
-
-eDirection pasta::dir;
-eDirection pasta::position[100];
+                                            
+eDirection pasta::dir;                                          // inicjalizacja potrzebnych zmiennych
+eDirection pasta::position[100];            
 
 const int pasta::height = 10;
 const int pasta::width = 10;
@@ -30,7 +30,6 @@ int pasta::x_apple;
 int pasta::y_apple;
 char pasta::map_choice;
 bool pasta::game_over = false;
-bool pasta::wyjscie = false;
 
 Vec_aski pasta::blok(2, aski(2, 'H'));
 Vec_aski pasta::miejsce(2, aski(2, ' '));
@@ -40,11 +39,11 @@ snake pasta::anakonda;
 apple pasta::owoc;
 map pasta::polmska;
 
-apple::apple()
+apple::apple()                                                  // inicjalizacja struktur
 {
     xd = aski(2, 'a');
     japko = Vec_aski(2, xd);
-}
+}                                              
 
 snake::snake()
 {
@@ -177,7 +176,7 @@ void pasta::input()
 
 void pasta::logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce)
 {
-    int prev_x = x_tail[0];
+    int prev_x = x_tail[0];                             //obliczanie pozycji ogonu
     int prev_y = y_tail[0];
     int prev_2x, prev_2y;
     eDirection prev_dir = position[0];
@@ -199,7 +198,7 @@ void pasta::logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce)
         position[i] = prev_dir;
         prev_dir = prev_2dir;
     }
-    switch (dir)
+    switch (dir)                    // wyznaczanie kierunku wê¿a
     {
     case LEFT:
         y--;
@@ -232,7 +231,7 @@ void pasta::logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce)
     {
         y = 0;
     }
-    for (int i = 0; i < n_tail; i++)
+    for (int i = 0; i < n_tail; i++)                                        // sprawdzanie kolizji z ogonem oraz œcian¹
     {
         if (x_tail[i] == x && y_tail[i] == y)
             game_over = true;
@@ -244,7 +243,7 @@ void pasta::logic(Mac& m, Vec_aski& blok, Vec_aski& miejsce)
             game_over = true;
         }
     }
-    if (x == x_apple && y == y_apple)
+    if (x == x_apple && y == y_apple)                                       //zjedzenie jab³ka oraz generacja nowego
     {
         n_tail += 1;
         score += 1;
@@ -326,7 +325,7 @@ Mac pasta::setup(map& mapa, Vec_aski& blok, Mac& papier)
 {
     
     papier = mapa.world;
-    if (map_choice == '1')
+    if (map_choice == '1')                                           // tworzenie wybranej mapy
     {
         return papier;
     }

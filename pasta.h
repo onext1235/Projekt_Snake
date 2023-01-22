@@ -62,7 +62,6 @@ class pasta
     static int y_apple;
     static char map_choice;
     static bool game_over;
-    static bool wyjscie;
 
     static Vec_aski blok;
     static Vec_aski miejsce;
